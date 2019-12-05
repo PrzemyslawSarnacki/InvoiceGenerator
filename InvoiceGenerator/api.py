@@ -213,7 +213,7 @@ class Invoice(UnicodeProperty):
     :param client: client of the invoice
     :type client: Client
     :param creator: creator of the invoice
-    :type creator: Creator
+    :type creator: Kreator
     :param provider: provider of the invoice
     :type provider: Provider
     """
@@ -240,7 +240,7 @@ class Invoice(UnicodeProperty):
     #: currency_locale: locale according to which will be the written currency representations
     currency_locale = "cs_CZ.UTF-8"
     #: currency identifier (e.g. "$" or "Kč")
-    currency = u"Kč"
+    currency = u"zł"
 
     use_tax = False
 
@@ -253,7 +253,7 @@ class Invoice(UnicodeProperty):
     #: Use this parameter to set different rounding strategy.
     rounding_strategy = decimal.ROUND_HALF_EVEN
 
-    def __init__(self, client, provider, creator):
+    def __init__(self, client, provider, creator, number):
         assert isinstance(client, Client)
         assert isinstance(provider, Provider)
         assert isinstance(creator, Creator)
@@ -261,6 +261,7 @@ class Invoice(UnicodeProperty):
         self.client = client
         self.provider = provider
         self.creator = creator
+        self.number = number 
         self._items = []
 
         for attr in self._attrs:
