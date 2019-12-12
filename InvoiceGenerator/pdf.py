@@ -3,7 +3,7 @@ import errno
 import locale
 import os
 import warnings
-import kwotaslownie
+from InvoiceGenerator import kwotaslownie
 
 from InvoiceGenerator.api import Invoice, QrCodeBuilder
 from InvoiceGenerator.conf import FONT_BOLD_PATH, FONT_PATH
@@ -347,8 +347,6 @@ class SimpleInvoice(BaseInvoice):
             pwidth, pheight = p.wrapOn(self.pdf, 70*mm if items_are_with_tax else 90*mm, 30*mm)
             i_add = max(float(pheight)/mm, 4.23)
 
-
-
             if will_wrap and TOP - i - i_add < 8 * mm:
                 will_wrap = False
                 self.pdf.rect(LEFT * mm, (TOP - i) * mm, (LEFT + 156) * mm, (i + 2) * mm, stroke=True, fill=False)  # 140,142
@@ -415,7 +413,8 @@ class SimpleInvoice(BaseInvoice):
 
         if not items_are_with_tax:
             self.pdf.setFont('DejaVu-Bold', 11)
-            self.pdf.drawString((LEFT + 100) * mm, (TOP - i - 7) * mm, '%s: %s' % (_(u'Cena całkowita'), currency(self.invoice.price, self.invoice.currency, self.invoice.currency_locale)))
+            self.pdf.drawString((LEFT + 100) * mm, (TOP - i - 7) * mm, '%s: %s' % (_(u'Cena całkowita'),
+                                                                                   currency(self.invoice.price, self.invoice.currency, self.invoice.currency_locale)))
         else:
             self.pdf.setFont('DejaVu-Bold', 6)
             self.pdf.drawString((LEFT + 1) * mm, (TOP - i - 2) * mm, _(u'VAT'))
@@ -454,7 +453,7 @@ class SimpleInvoice(BaseInvoice):
                 (LEFT + 100) * mm,
                 (TOP - i - 14) * mm,
                 u'%s: %s' % (_(u'Cena Całkowita'), currency(self.invoice.price_tax, self.invoice.currency, self.invoice.currency_locale)),
-                )
+            )
             self.pdf.setFont('DejaVu', 5)
             self.pdf.drawString(
                 (LEFT + 88) * mm,
@@ -562,7 +561,7 @@ class CorrectingInvoice(SimpleInvoice):
 
 class ProformaInvoice(SimpleInvoice):
 
-    def _drawCreator(self, TOP, LEFT):
+    def _drawCreator(self, TOP, LEFT, recipient):
         return
 
     def _drawTitle(self):
@@ -579,12 +578,12 @@ class ProformaInvoice(SimpleInvoice):
         top = TOP + 1
         items = []
         if self.invoice.date:
-            items.append((LEFT * mm, '%s: %s' % (_(u'Date of exposure'), self.invoice.date)))
+            items.append((LEFT * mm, '%s: %s' % (_(u'Data wpływu'), self.invoice.date)))
         if self.invoice.payback:
-            items.append((LEFT * mm, '%s: %s' % (_(u'Payback'), self.invoice.payback)))
+            items.append((LEFT * mm, '%s: %s' % (_(u'Spłata'), self.invoice.payback)))
 
         if self.invoice.paytype:
-            items.append((LEFT * mm, '%s: %s' % (_(u'Paytype'),
+            items.append((LEFT * mm, '%s: %s' % (_(u'Typ płatności'),
                                                  self.invoice.paytype)))
 
         for item in items:
